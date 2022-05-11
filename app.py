@@ -28,11 +28,13 @@
 #
 #===========================================================================*/
 
+from math import prod
 from pydoc import describe
 from flask import Flask,jsonify,request
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-import os
+import os 
+from dotenv import load_dotenv
 
 #Init app
 app = Flask(__name__)
@@ -125,6 +127,13 @@ def update_product():
 
     return product_schema.jsonify(product)
 
+#Delete
+@app.route('/product/<id>',methods=['DELETE'])
+def delete_product(id):
+    product = Product.query.get(id)
+    db.session.delete(product)
+    db.session.commit()
+    return product_schema.jsonify(product)
 
 
 

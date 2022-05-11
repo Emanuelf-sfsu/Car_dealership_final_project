@@ -1,0 +1,26 @@
+CREATE DATABASE IF NOT EXISTS SFAutoMall;
+USE SFAutoMall ;
+CREATE TABLE Manufacturer(
+    M_Name varchar(255) NOT NULL UNIQUE,
+    Phone integer,
+    State varchar(255) NOT NULL,
+    PRIMARY KEY (M_Name));
+
+CREATE TABLE Vehicle (
+    Model varchar(255) NOT NULL,
+    Value integer NOT NULL,
+    Year integer NOT NULL ,
+    PRIMARY KEY (Model ));
+
+CREATE TABLE Person (
+    P_Name varchar(255) NOT NULL UNIQUE,
+    Age integer,
+    License integer NOT NULL,
+    PRIMARY KEY (P_Name));
+
+CREATE TABLE Offices
+    State varchar(255) NOT NULL,
+    Phone integer,
+    District_id integer NOT NULL UNIQUE,
+    PRIMARY KEY (District_id));
+

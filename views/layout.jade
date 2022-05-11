@@ -3,5 +3,31 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js') 
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js')
+
   body
     block content
+    div.jumbotron
+      div.container.text-center
+        h1 Welcome to #{title}
+        p Where we find the right car for YOU
+     
+    nav
+      div.navbar.navbar-inverse 
+        div.container-fluid 
+          div.navbar-header
+            a(href="#").navbar-brand SFAutoMall
+          div.collapse.navbar-collapse 
+            #myNavbar
+              ul.nav.navbar-nav
+                li
+                  a(href="#") New Vehicles 
+                li
+                  a(href="#") Offices
+                li
+                  a(href="#") Manufactures
+
+    
+
