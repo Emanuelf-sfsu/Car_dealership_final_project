@@ -1,0 +1,8 @@
+CREATE TABLE Product(
+    id integer,
+    name Text(100) UNIQUE,
+    description Text(200),
+    price float,
+    qty integer,
+    PRIMARY KEY(id)
+);
