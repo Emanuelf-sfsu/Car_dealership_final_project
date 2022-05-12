@@ -16,7 +16,7 @@
 #                help achieve the frontends requests.
 #                
 #                Use `python3 app.py` to start the rest server. 
-#                After creating product(s)Schema run: 
+#                After creating Manufacturer(s)Schema run: 
 #                python
 #                db.create_all()                
 #
@@ -42,7 +42,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'SFAutoMall.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init DB
@@ -51,89 +51,159 @@ db = SQLAlchemy(app)
 # Init Marshmallow
 ma = Marshmallow(app)
 
-# Product/class, find more at Flask-marshmellow
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(100),unique = True)
-    description = db.Column(db.String(200))
-    price = db.Column(db.Float)
-    qty = db.Column(db.Integer)
+# Manufacturer/class, find more at Flask-marshmellow
+class Manufacturer(db.Model):
+    M_Name = db.Column(db.String(100) ,primary_key = True,unique=True)
+    Phone = db.Column(db.Integer)
+    State = db.Column(db.String(100))
 
-    def __init__(self, name, description, price, qty):
-        self.name = name
-        self.description = description
-        self.price = price
-        self.qty = qty
+    def __init__(self, M_Name, Phone, State):
+        self.M_Name = M_Name
+        self.Phone = Phone
+        self.State = State
 
-# Product Schema 
-class ProductSchema(ma.Schema):
+
+# Manufacturer Schema 
+class ManufacturerSchema(ma.Schema):
     class Meta:
-        fields = ('id','name','description','price','qty')
-
+        fields = ( 'M_Name', 'Phone', 'State')
 #Init Schema
 #`strict = True` removes warning from console. 
-# product_schema is for singlar entry and products is for multiple 
+# Manufacturer_schema is for singlar entry and Manufacturers is for multiple 
 # used commands 
-product_schema = ProductSchema() 
-products_schema = ProductSchema(many=True,) 
+Manufacturer_schema = ManufacturerSchema() 
+Manufacturers_schema = ManufacturerSchema(many=True) 
 
-#Create Product
-@app.route('/product',methods=['POST'])
-def add_product():
-    name = request.json['name']
-    description = request.json['description']
-    price = request.json['price']
-    qty = request.json['qty']
+# Offices
+class Offices(db.Model):
+    District_id = db.Column(db.Integer ,primary_key = True,unique=True)
+    Phone = db.Column(db.Integer)
+    State = db.Column(db.String(100))
 
-    # Creating new product object
-    new_product = Product(name,description,price,qty)
-    # adding new entry to data base
-    db.session.add(new_product)
-    db.session.commit()
+    def __init__(self,District_id, Phone, State):
+        self.District_id = District_id
+        self.Phone = Phone
+        self.State = State
 
-    return product_schema.jsonify(new_product)
 
-#get all products
-@app.route('/product',methods=['GET'])
-def get_products():
-    all_products = Product.query.all()
-    result = products_schema.dump(all_products)
+# Offices Schema 
+class OfficesSchema(ma.Schema):
+    class Meta:
+        fields = ( 'District_id', 'Phone', 'State')
+
+
+# Office
+Office_schema = OfficesSchema() 
+Offices_schema = OfficesSchema(many=True)
+
+# Vehicles--------------------------
+class Vehicle(db.Model):
+    Model = db.Column(db.String(100),primary_key = True)
+    Year = db.Column(db.Integer)
+    Value = db.Column(db.Integer)
+    Repair = db.Column(db.Integer)
+    child = db.relationship('child',backref='Vehicle')
+
+class child(db.Model):
+    Buyer = db.Column(db.String(100),db.ForeignKey('Vehicle.Model'))
+    Make = db.Column(db.String(100),db.ForeignKey('Vehicle.Model'))
+    District_id = db.Column(db.Integer,db.ForeignKey('Vehicle.Model'))
+
+    def __init__(self,Make, Model, Year,Value,Buyer,Repair,District_id):
+        self.District_id = District_id
+        self.Make = Make
+        self.Model = Model
+        self.Year = Year
+        self.Value = Value
+        self.Buyer = Buyer
+        self.Repair = Repair
+
+
+
+
+# Vehicle Schema 
+class VehicleSchema(ma.Schema):
+    class Meta:
+        fields = ( 'Make', 'Model', 'Year','Value','Buyer','Repair','District_id')
+
+
+# Vehicle
+Vehicle_schema = VehicleSchema() 
+Vehicles_schema = VehicleSchema(many=True)
+# ----------------------------------------------
+# #Create Manufacturer
+# @app.route('/Manufacturer',methods=['POST'])
+# def add_Manufacturer():
+#     name = request.json['name']
+#     description = request.json['description']
+#     price = request.json['price']
+#     qty = request.json['qty']
+
+#     # Creating new Manufacturer object
+#     new_Manufacturer = Manufacturer(name,description,price,qty)
+#     # adding new entry to data base
+#     db.session.add(new_Manufacturer)
+#     db.session.commit()
+
+#     return Manufacturer_schema.jsonify(new_Manufacturer)
+
+# get all Manufacturers
+@app.route('/Manufacturer',methods=['GET'])
+def get_Manufacturers():
+    all_Manufacturers = Manufacturer.query.all()
+    result = Manufacturers_schema.dump(all_Manufacturers)
     return jsonify(result)
 
+# get all offices
+@app.route('/offices',methods=['GET'])
+def get_Offices():
+    all_Offices = Offices.query.all()
+    result = Offices_schema.dump(all_Offices)
+    return jsonify(result)
+
+# get all Vehicle
+@app.route('/vehicle',methods=['GET'])
+def get_Vehicle():
+    all_Vehicle = Vehicle.query.all()
+    result = Vehicle_schema.dump(all_Vehicle)
+    return jsonify(result)
+
+
+
 #get single
-@app.route('/product/<id>',methods=['GET'])
-def get_product(id):
-    product = Product.query.get(id)
-    return product_schema.jsonify(product)
+@app.route('/Manufacturer/<id>',methods=['GET'])
+def get_Manufacturer(id):
+    Manufacturer = Manufacturer.query.get(id)
+    return Manufacturer_schema.jsonify(Manufacturer)
 
-#Update Product
-@app.route('/product/<id>',methods=['PUT'])
-def update_product():
-    product = Product.query.get(id)
+# #Update Manufacturer
+# @app.route('/Manufacturer/<id>',methods=['PUT'])
+# def update_Manufacturer():
+#     Manufacturer = Manufacturer.query.get(id)
 
-    #getting data from the body
-    name = request.json['name']
-    description = request.json['description']
-    price = request.json['price']
-    qty = request.json['qty']
+#     #getting data from the body
+#     name = request.json['name']
+#     description = request.json['description']
+#     price = request.json['price']
+#     qty = request.json['qty']
 
-    product.name = name
-    product.description = description
-    product.price = price
-    product.qty = qty
+#     Manufacturer.name = name
+#     Manufacturer.description = description
+#     Manufacturer.price = price
+#     Manufacturer.qty = qty
 
-    db.session.commit()
+#     db.session.commit()
 
 
-    return product_schema.jsonify(product)
+#     return Manufacturer_schema.jsonify(Manufacturer)
 
-#Delete
-@app.route('/product/<id>',methods=['DELETE'])
-def delete_product(id):
-    product = Product.query.get(id)
-    db.session.delete(product)
-    db.session.commit()
-    return product_schema.jsonify(product)
+# #Delete
+# @app.route('/Manufacturer/<id>',methods=['DELETE'])
+# def delete_Manufacturer(id):
+#     Manufacturer = Manufacturer.query.get(id)
+#     db.session.delete(Manufacturer)
+#     db.session.commit()
+#     return Manufacturer_schema.jsonify(Manufacturer)
 
 
 
