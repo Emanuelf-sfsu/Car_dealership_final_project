@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/emanuel/Desktop/sqlite_testing/test.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2307"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,12:mainManufacturer"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Manufacturer" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="62"/><column index="2" value="48"/><column index="3" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Edit View Makes">CREATE VIEW Buyers AS
+SELECT Car.Buyer,Car.Make,Car.Model,Car.Year,Car.Value
+FROM Vehicle Car
+</sql><sql name="Edit View Buyers">DROP VIEW &quot;main&quot;.&quot;Buyers&quot;;
+CREATE VIEW Buyers AS
+SELECT Car.Buyer,Car.Make,Car.Model,Car.Year
+FROM Vehicle Car
+WHERE NOT Car.Buyer = 'NA';</sql><sql name="SQL 5">-- Create Tables
+CREATE TABLE &quot;Manufacturer&quot; (
+	&quot;M_Name&quot;	TEXT NOT NULL UNIQUE,
+	&quot;Phone&quot;	integer,
+	&quot;State&quot;	TEXT,
+	PRIMARY KEY(&quot;M_Name&quot;)
+);
+CREATE TABLE &quot;Offices&quot; (
+	&quot;State&quot;	TEXT NOT NULL,
+	&quot;Phone&quot;	integer,
+	&quot;District_id&quot;	INTEGER NOT NULL DEFAULT 1 UNIQUE,
+	PRIMARY KEY(&quot;District_id&quot; AUTOINCREMENT)
+);
+CREATE TABLE &quot;Person&quot; (
+	&quot;P_Name&quot;	TEXT NOT NULL,
+	&quot;Age&quot;	integer,
+	&quot;License&quot;	integer NOT NULL,
+	PRIMARY KEY(&quot;P_Name&quot;)
+);
+CREATE TABLE &quot;Vehicle&quot; (
+	&quot;Make&quot;	TEXT NOT NULL,
+	&quot;Model&quot;	TEXT NOT NULL,
+	&quot;Year&quot;	integer,
+	&quot;Value&quot;	integer,
+	&quot;Buyer&quot;	TEXT DEFAULT 'NA',
+	&quot;Repair&quot;	INTEGER,
+	&quot;District_Id&quot;	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY(&quot;Model&quot;),
+	FOREIGN KEY(&quot;District_id&quot;) REFERENCES &quot;Offices&quot;,
+	FOREIGN KEY(&quot;Make&quot;) REFERENCES &quot;Manufacturer&quot;(&quot;M_Name&quot;),
+	FOREIGN KEY(&quot;Buyer&quot;) REFERENCES &quot;Person&quot;(&quot;P_Name&quot;)
+);
+-- Indexes
+CREATE INDEX &quot;Drivers&quot; ON &quot;Person&quot; (
+	&quot;P_Name&quot;,
+	&quot;License&quot;
+);
+CREATE INDEX &quot;Pricing&quot; ON &quot;Vehicle&quot; (
+	&quot;Make&quot;,
+	&quot;Value&quot;	DESC
+);
+CREATE INDEX &quot;Quick_Search&quot; ON &quot;Vehicle&quot; (
+	&quot;Make&quot;,
+	&quot;Model&quot;
+);
+-- Views
+CREATE VIEW Buyers AS
+SELECT Car.Buyer,Car.Make,Car.Model,Car.Year,Car.Value
+FROM Vehicle Car
+
+CREATE VIEW Inventory 
+AS SELECT Make,Model,Year,Buyer,District_id
+FROM Vehicle
+WHERE Buyer='NA'
+
+CREATE VIEW Makes AS
+SELECT Car.Make,Car.Model,Car.Year
+FROM Manufacturer Maker, Vehicle Car
+WHERE Maker.M_Name = Car.Make
+
+CREATE VIEW Repairs AS
+SELECT Car.Buyer,Car.Make,Car.Model,Car.Year,Car.Repair
+FROM Vehicle Car
+WHERE Car.Repair = 1</sql><current_tab id="2"/></tab_sql></sqlb_project>

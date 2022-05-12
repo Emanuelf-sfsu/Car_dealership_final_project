@@ -24,3 +24,9 @@ CREATE TABLE Offices
     District_id integer NOT NULL UNIQUE,
     PRIMARY KEY (District_id));
 
+CREATE TABLE Inventory(
+    Model varchar(255) NOT NULL,
+    District_id integer NOT NULL,
+    Amount integer,
+    PRIMARY KEY(Model),
+    FOREIGN KEY (District_id) REFERENCES Vehicle(Model));
